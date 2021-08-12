@@ -1,6 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+/* 通貨ペア */
+enum Symbol {BTC_USDT, ETH_USDT, XRP_USDT, BNB_USDT,}
+extension on Symbol { String get str => this.toString().split(".").last;}
+
+/* 業者 */
+enum Broker {Binance, FTX, KuCoin, Bitstamp, Poloniex, Bittrex, OKEx, Liquid,}
+extension on Broker { String get str => this.toString().split(".").last;}
+
+/* 業者id */
+enum BrokerId { bi, fx, kc, bs, pn, bt, ex, lq,}
+extension on BrokerId { String get str => this.toString().split(".").last;}
+
 void main() {
   runApp(MyApp());
 }
@@ -14,6 +26,7 @@ class MyApp extends StatelessWidget {
       title: '安買高売',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: "Noto Sans JP",
       ),
       locale: locale,
       localizationsDelegates: const [
@@ -98,7 +111,7 @@ class _HomePageState extends State<HomePage> {
                         padding: EdgeInsets.all(10),
                         child: Table(
                           border: TableBorder.all(),
-                          /* Riverpodで状態管理を行う */
+                          /* Riverpod で状態管理を行う */
                           children: [
                             TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("通貨ペア")),Padding(padding: EdgeInsets.all(4.0),child: Text("BTC/USDT")),Text("")                                                 ,Padding(padding: EdgeInsets.all(4.0),child: Text("ETH/USDT")) ,Text("")                                                 ,Padding(padding: EdgeInsets.all(4.0),child: Text("XRP/USDT")) ,Text("")                                                 ,Padding(padding: EdgeInsets.all(4.0),child: Text("BNB/USDT")),Text("")                                                ,]),
                             TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("業者"))    ,Padding(padding: EdgeInsets.all(4.0),child: Text("Bid"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("Ask")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("Bid"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("Ask")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("Bid"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("Ask")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("Bid"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("Ask")),]),
