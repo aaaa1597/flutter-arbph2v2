@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod/riverpod.dart';
 
 /* 通貨ペア */
 enum Symbol {BTC_USDT, ETH_USDT, XRP_USDT, BNB_USDT,}
@@ -14,11 +18,10 @@ enum BrokerId { bi, fx, kc, bs, pn, bt, ex, lq,}
 extension on BrokerId { String get str => this.toString().split(".").last;}
 
 void main() {
-  runApp(MyApp());
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     const locale = Locale("ja", "JP");
@@ -37,32 +40,17 @@ class MyApp extends StatelessWidget {
       supportedLocales: const [
         locale,
       ],
-      home: HomePage(title: '仮想通貨の現在売買値'),
+      home: _HomePage(),
     );
   }
 }
 
-class HomePage extends StatefulWidget {
-  HomePage({Key? key, required this.title}) : super(key: key);
-  final String title;
-
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  int _counter = 0;
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
+class _HomePage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text('仮想通貨の現在売買値'),
       ),
       body: DefaultTextStyle.merge(
         style: TextStyle(fontSize: 24,),
@@ -79,8 +67,6 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text('You have pushed the button this many times:',),
-                      Text('$_counter', style: Theme.of(context).textTheme.headline4, ),
                       Padding(
                         padding: EdgeInsets.all(10),
                         child: Table(
@@ -133,11 +119,6 @@ class _HomePageState extends State<HomePage> {
               ]
             ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
       ),
     );
   }
