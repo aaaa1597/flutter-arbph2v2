@@ -4,18 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod/riverpod.dart';
 
-/* 通貨ペア */
-enum Symbol {BTC_USDT, ETH_USDT, XRP_USDT, BNB_USDT,}
-extension on Symbol { String get str => this.toString().split(".").last;}
-
-/* 業者 */
-enum Broker {Binance, FTX, KuCoin, Bitstamp, Poloniex, Bittrex, OKEx, Liquid,}
-extension on Broker { String get str => this.toString().split(".").last;}
-
-/* 業者id */
-enum BrokerId { bi, fx, kc, bs, pn, bt, ex, lq,}
-extension on BrokerId { String get str => this.toString().split(".").last;}
-
 void main() {
   runApp(ProviderScope(child: MyApp()));
 }
@@ -34,7 +22,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class _HomePage extends HookWidget {
+class _HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,21 +72,7 @@ class _HomePage extends HookWidget {
                     children: <Widget>[
                       Padding(
                         padding: EdgeInsets.all(10),
-                        child: Table(
-                          border: TableBorder.all(),
-                          /* Riverpod で状態管理を行う */
-                          children: [
-                            TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("通貨ペア")),Padding(padding: EdgeInsets.all(4.0),child: Text("BTC/USDT")),Text("")                                                 ,Padding(padding: EdgeInsets.all(4.0),child: Text("ETH/USDT")) ,Text("")                                                 ,Padding(padding: EdgeInsets.all(4.0),child: Text("XRP/USDT")) ,Text("")                                                 ,Padding(padding: EdgeInsets.all(4.0),child: Text("BNB/USDT")),Text("")                                                ,]),
-                            TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("業者"))    ,Padding(padding: EdgeInsets.all(4.0),child: Text("Bid"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("Ask")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("Bid"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("Ask")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("Bid"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("Ask")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("Bid"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("Ask")),]),
-                            TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("Binance")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")),]),
-                            TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("FTX"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")),]),
-                            TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("KuCoin"))  ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")),]),
-                            TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("Bitstamp")),Padding(padding: EdgeInsets.all(4.0),child: Text("---"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")),]),
-                            TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("Poloniex")),Padding(padding: EdgeInsets.all(4.0),child: Text("---"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")),]),
-                            TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("Bittrex")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")),]),
-                            TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("OKEx"))    ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")),]),
-                            TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("KuCoin"))  ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("---"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("---")),]),
-                          ],),
+                        child: _AskBidTable(),
                       ),
                       /* \u{2252}...≒ */
                       Text('※0.0005[BTC]\u{2252}2,000(円)　※0.003[ETH]\u{2252}1,030(円)　※0.2[XRP]\u{2252}18(円)　※0.02[BNB]\u{2252}780(円)',),
@@ -110,5 +84,118 @@ class _HomePage extends HookWidget {
         ),
       ),
     );
+  }
+}
+
+/* 通貨ペアenum */
+enum Symbol {BTC_USDT, ETH_USDT, XRP_USDT, BNB_USDT,}
+extension on Symbol { String get str => this.toString().split(".").last;}
+
+/* 業者名enum */
+enum Broker {Binance, FTX, KuCoin, Bitstamp, Poloniex, Bittrex, OKEx, Liquid,}
+extension on Broker { String get str => this.toString().split(".").last;}
+
+/* 業者idenum */
+enum BrokerId { bi, fx, kc, bs, pn, bt, ex, lq,}
+extension on BrokerId { String get str => this.toString().split(".").last;}
+
+class AskBidData {
+  AskBidData(this.symbol, this.id, this.ask, this.bid);
+  final Symbol symbol;
+  final BrokerId id;
+  final double ask;
+  final double bid;
+}
+
+final askbidProvider = Provider.family<List<AskBidData>, BrokerId>((ref, bid) {
+   return [AskBidData(Symbol.BTC_USDT, bid, 111.0, 222.0),
+           AskBidData(Symbol.ETH_USDT, bid, 111.1, 222.1),
+           AskBidData(Symbol.XRP_USDT, bid, 111.2, 222.2),
+           AskBidData(Symbol.BNB_USDT, bid, 111.3, 222.3),];
+});
+
+class _AskBidTable extends HookWidget {
+  @override
+  Widget build(BuildContext context) {
+    final AskBidsbi = useProvider(askbidProvider(BrokerId.bi));
+    final AskBidsfx = useProvider(askbidProvider(BrokerId.fx));
+    final AskBidskc = useProvider(askbidProvider(BrokerId.kc));
+    final AskBidsbs = useProvider(askbidProvider(BrokerId.bs));
+    final AskBidspn = useProvider(askbidProvider(BrokerId.pn));
+    final AskBidsbt = useProvider(askbidProvider(BrokerId.bt));
+    final AskBidsex = useProvider(askbidProvider(BrokerId.ex));
+    final AskBidslq = useProvider(askbidProvider(BrokerId.lq));
+
+    return Table(
+      border: TableBorder.all(),
+      /* Riverpod で状態管理を行う */
+      children: [
+        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("通貨ペア")),Padding(padding: EdgeInsets.all(4.0),child: Text("BTC/USDT")),Text("")                                                 ,Padding(padding: EdgeInsets.all(4.0),child: Text("ETH/USDT")) ,Text("")                                                 ,Padding(padding: EdgeInsets.all(4.0),child: Text("XRP/USDT")) ,Text("")                                                 ,Padding(padding: EdgeInsets.all(4.0),child: Text("BNB/USDT")),Text("")                                                ,]),
+        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("業者"))    ,Padding(padding: EdgeInsets.all(4.0),child: Text("Bid"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("Ask")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("Bid"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("Ask")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("Bid"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("Ask")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("Bid"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("Ask")),]),
+        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("Binance")) ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi[0].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi[0].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi[1].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi[1].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi[2].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi[2].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi[3].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi[3].bid.toStringAsFixed(4))),]),
+        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("FTX"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx[0].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx[0].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx[1].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx[1].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx[2].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx[2].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx[3].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx[3].bid.toStringAsFixed(4))),]),
+        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("KuCoin"))  ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc[0].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc[0].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc[1].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc[1].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc[2].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc[2].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc[3].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc[3].bid.toStringAsFixed(4))),]),
+        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("Bitstamp")),Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs[0].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs[0].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs[1].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs[1].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs[2].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs[2].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs[3].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs[3].bid.toStringAsFixed(4))),]),
+        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("Poloniex")),Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn[0].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn[0].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn[1].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn[1].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn[2].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn[2].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn[3].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn[3].bid.toStringAsFixed(4))),]),
+        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("Bittrex")) ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt[0].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt[0].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt[1].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt[1].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt[2].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt[2].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt[3].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt[3].bid.toStringAsFixed(4))),]),
+        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("OKEx"))    ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex[0].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex[0].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex[1].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex[1].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex[2].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex[2].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex[3].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex[3].bid.toStringAsFixed(4))),]),
+        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("Liquid"))  ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq[0].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq[0].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq[1].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq[1].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq[2].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq[2].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq[3].bid.toStringAsFixed(4)))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq[3].bid.toStringAsFixed(4))),]),
+      ],);
   }
 }
