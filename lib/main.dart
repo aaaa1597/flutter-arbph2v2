@@ -3,6 +3,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod/riverpod.dart';
+import 'api.dart';
+import 'model.dart';
 
 void main() {
   runApp(ProviderScope(child: MyApp()));
@@ -87,31 +89,8 @@ class _HomePage extends StatelessWidget {
   }
 }
 
-/* 通貨ペアenum */
-enum Symbol {BTC_USDT, ETH_USDT, XRP_USDT, BNB_USDT,}
-extension on Symbol { String get str => this.toString().split(".").last;}
-
-/* 業者名enum */
-enum Broker {Binance, FTX, KuCoin, Bitstamp, Poloniex, Bittrex, OKEx, Liquid,}
-extension on Broker { String get str => this.toString().split(".").last;}
-
-/* 業者idenum */
-enum BrokerId { bi, fx, kc, bs, pn, bt, ex, lq,}
-extension on BrokerId { String get str => this.toString().split(".").last;}
-
-class AskBidDataforTbl {
-  AskBidDataforTbl(this.symbol, this.id, this.askstr, this.bidstr);
-  final Symbol symbol;
-  final BrokerId id;
-  final String askstr;
-  final String bidstr;
-}
-
-final askbidProvider = Provider.family<List<AskBidDataforTbl>, BrokerId>((ref, bid) {
-   return [AskBidDataforTbl(Symbol.BTC_USDT, bid, '111.0', '222.0'),
-           AskBidDataforTbl(Symbol.ETH_USDT, bid, '111.1', '222.1'),
-           AskBidDataforTbl(Symbol.XRP_USDT, bid, '111.2', '222.2'),
-           AskBidDataforTbl(Symbol.BNB_USDT, bid, '111.3', '222.3'),];
+final FutureProviderFamily askbidProvider = FutureProvider.family<Map<Symbol, AskBidDataforTbl>, BrokerId>((ref, bid) {
+  return GetTicker(bid);
 });
 
 class _AskBidTable extends HookWidget {
@@ -132,70 +111,78 @@ class _AskBidTable extends HookWidget {
       children: [
         TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("通貨ペア")),Padding(padding: EdgeInsets.all(4.0),child: Text("BTC/USDT")),Text("")                                                 ,Padding(padding: EdgeInsets.all(4.0),child: Text("ETH/USDT")) ,Text("")                                                 ,Padding(padding: EdgeInsets.all(4.0),child: Text("XRP/USDT")) ,Text("")                                                 ,Padding(padding: EdgeInsets.all(4.0),child: Text("BNB/USDT")),Text("")                                                ,]),
         TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("業者"))    ,Padding(padding: EdgeInsets.all(4.0),child: Text("Bid"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("Ask")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("Bid"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("Ask")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("Bid"))      ,Padding(padding: EdgeInsets.all(4.0),child: Text("Ask")) ,Padding(padding: EdgeInsets.all(4.0),child: Text("Bid"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text("Ask")),]),
-        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("Binance")) ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi[0].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi[0].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi[1].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi[1].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi[2].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi[2].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi[3].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi[3].bidstr)),]),
-        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("FTX"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx[0].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx[0].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx[1].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx[1].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx[2].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx[2].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx[3].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx[3].bidstr)),]),
-        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("KuCoin"))  ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc[0].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc[0].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc[1].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc[1].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc[2].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc[2].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc[3].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc[3].bidstr)),]),
-        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("Bitstamp")),Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs[0].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs[0].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs[1].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs[1].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs[2].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs[2].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs[3].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs[3].bidstr)),]),
-        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("Poloniex")),Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn[0].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn[0].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn[1].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn[1].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn[2].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn[2].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn[3].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn[3].bidstr)),]),
-        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("Bittrex")) ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt[0].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt[0].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt[1].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt[1].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt[2].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt[2].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt[3].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt[3].bidstr)),]),
-        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("OKEx"))    ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex[0].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex[0].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex[1].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex[1].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex[2].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex[2].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex[3].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex[3].bidstr)),]),
-        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("Liquid"))  ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq[0].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq[0].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq[1].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq[1].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq[2].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq[2].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq[3].bidstr))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq[3].bidstr)),]),
-      ],);
+        /******************************************/
+        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("Binance")) ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi.when(data: (ret) => ret[Symbol.BTC_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi.when(data: (ret) => ret[Symbol.BTC_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi.when(data: (ret) => ret[Symbol.ETH_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi.when(data: (ret) => ret[Symbol.ETH_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi.when(data: (ret) => ret[Symbol.XRP_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi.when(data: (ret) => ret[Symbol.XRP_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi.when(data: (ret) => ret[Symbol.BNB_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbi.when(data: (ret) => ret[Symbol.BNB_USDT].askstr, loading: () => '...', error: (e, stack) => '---'))),]),
+        /******************************************/
+        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("FTX"))     ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx.when(data: (ret) => ret[Symbol.BTC_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx.when(data: (ret) => ret[Symbol.BTC_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx.when(data: (ret) => ret[Symbol.ETH_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx.when(data: (ret) => ret[Symbol.ETH_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx.when(data: (ret) => ret[Symbol.XRP_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx.when(data: (ret) => ret[Symbol.XRP_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx.when(data: (ret) => ret[Symbol.BNB_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsfx.when(data: (ret) => ret[Symbol.BNB_USDT].askstr, loading: () => '...', error: (e, stack) => '---'))),]),
+        /******************************************/
+        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("KuCoin"))  ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc.when(data: (ret) => ret[Symbol.BTC_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc.when(data: (ret) => ret[Symbol.BTC_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc.when(data: (ret) => ret[Symbol.ETH_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc.when(data: (ret) => ret[Symbol.ETH_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc.when(data: (ret) => ret[Symbol.XRP_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc.when(data: (ret) => ret[Symbol.XRP_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc.when(data: (ret) => ret[Symbol.BNB_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidskc.when(data: (ret) => ret[Symbol.BNB_USDT].askstr, loading: () => '...', error: (e, stack) => '---'))),]),
+        /******************************************/
+        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("Bitstamp")),Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs.when(data: (ret) => ret[Symbol.BTC_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs.when(data: (ret) => ret[Symbol.BTC_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs.when(data: (ret) => ret[Symbol.ETH_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs.when(data: (ret) => ret[Symbol.ETH_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs.when(data: (ret) => ret[Symbol.XRP_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs.when(data: (ret) => ret[Symbol.XRP_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs.when(data: (ret) => ret[Symbol.BNB_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbs.when(data: (ret) => ret[Symbol.BNB_USDT].askstr, loading: () => '...', error: (e, stack) => '---'))),]),
+        /******************************************/
+        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("Poloniex")),Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn.when(data: (ret) => ret[Symbol.BTC_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn.when(data: (ret) => ret[Symbol.BTC_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn.when(data: (ret) => ret[Symbol.ETH_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn.when(data: (ret) => ret[Symbol.ETH_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn.when(data: (ret) => ret[Symbol.XRP_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn.when(data: (ret) => ret[Symbol.XRP_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn.when(data: (ret) => ret[Symbol.BNB_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidspn.when(data: (ret) => ret[Symbol.BNB_USDT].askstr, loading: () => '...', error: (e, stack) => '---'))),]),
+        /******************************************/
+        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("Bittrex")) ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt.when(data: (ret) => ret[Symbol.BTC_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt.when(data: (ret) => ret[Symbol.BTC_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt.when(data: (ret) => ret[Symbol.ETH_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt.when(data: (ret) => ret[Symbol.ETH_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt.when(data: (ret) => ret[Symbol.XRP_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt.when(data: (ret) => ret[Symbol.XRP_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt.when(data: (ret) => ret[Symbol.BNB_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsbt.when(data: (ret) => ret[Symbol.BNB_USDT].askstr, loading: () => '...', error: (e, stack) => '---'))),]),
+        /******************************************/
+        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("OKEx"))    ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex.when(data: (ret) => ret[Symbol.BTC_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex.when(data: (ret) => ret[Symbol.BTC_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex.when(data: (ret) => ret[Symbol.ETH_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex.when(data: (ret) => ret[Symbol.ETH_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex.when(data: (ret) => ret[Symbol.XRP_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex.when(data: (ret) => ret[Symbol.XRP_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex.when(data: (ret) => ret[Symbol.BNB_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidsex.when(data: (ret) => ret[Symbol.BNB_USDT].askstr, loading: () => '...', error: (e, stack) => '---'))),]),
+        /******************************************/
+        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: Text("Liquid"))  ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq.when(data: (ret) => ret[Symbol.BTC_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq.when(data: (ret) => ret[Symbol.BTC_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq.when(data: (ret) => ret[Symbol.ETH_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq.when(data: (ret) => ret[Symbol.ETH_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq.when(data: (ret) => ret[Symbol.XRP_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq.when(data: (ret) => ret[Symbol.XRP_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq.when(data: (ret) => ret[Symbol.BNB_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: Text(AskBidslq.when(data: (ret) => ret[Symbol.BNB_USDT].askstr, loading: () => '...', error: (e, stack) => '---'))),]),
+    ],);
   }
 }
