@@ -76,11 +76,10 @@ class _HomePage extends StatelessWidget {
                         padding: EdgeInsets.all(10),
                         child: _AskBidTable(),
                       ),
-                      /* \u{2252}...≒ */
-                      SelectableText('※0.0005[BTC]\u{2252}2,000(円)　※0.003[ETH]\u{2252}1,030(円)　※0.2[XRP]\u{2252}18(円)　※0.02[BNB]\u{2252}780(円)',),
                     ],
                   ),
                 ),
+                SelectableText('※"***":市場なし',),
               ]
             ),
         ),
@@ -145,8 +144,8 @@ class _AskBidTable extends HookWidget {
                                                                                          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(AskBidsbs.when(data: (ret) => ret[Symbol.ETH_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
                                                                                          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(AskBidsbs.when(data: (ret) => ret[Symbol.XRP_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
                                                                                          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(AskBidsbs.when(data: (ret) => ret[Symbol.XRP_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(AskBidsbs.when(data: (ret) => ret[Symbol.BNB_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
-                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(AskBidsbs.when(data: (ret) => ret[Symbol.BNB_USDT].askstr, loading: () => '...', error: (e, stack) => '---'))),]),
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***'))
+                                                                                         ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***')),]),
         /******************************************/
         TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Poloniex")),Padding(padding: EdgeInsets.all(4.0),child: SelectableText(AskBidspn.when(data: (ret) => ret[Symbol.BTC_USDT].bidstr, loading: () => '...', error: (e, stack) => '---')))
                                                                                          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(AskBidspn.when(data: (ret) => ret[Symbol.BTC_USDT].askstr, loading: () => '...', error: (e, stack) => '---')))

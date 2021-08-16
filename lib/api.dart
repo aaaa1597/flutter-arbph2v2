@@ -15,7 +15,7 @@ Future<Map<Symbol, AskBidDataforTbl>> GetTicker(BrokerId bid) async {
     case BrokerId.bi: retjson = getTickerBi(pairs); break;
     case BrokerId.fx: retjson = getTickerFx(pairs); break;
     case BrokerId.kc: retjson = getTickerKc(pairs); break;
-    case BrokerId.bs: retjson = getTickerBi(pairs); break;
+    case BrokerId.bs: retjson = getTickerBs(pairs); break;
     case BrokerId.pn: retjson = getTickerBi(pairs); break;
     case BrokerId.bt: retjson = getTickerBi(pairs); break;
     case BrokerId.ex: retjson = getTickerBi(pairs); break;
@@ -67,7 +67,9 @@ Future<Map<Symbol, AskBidDataforTbl>> getTickerFx(Set<Symbol> pairs) async {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "POST, GET, OPTIONS, PUT, DELETE, HEAD",
   });
-  final retjson2 = await json.decode(retRes.body)['result'].where((item)=>PairStrs.contains(item['name'])).toList();
+  final retjson1 = await json.decode(retRes.body);
+  if(retjson1.containsKey('result') == false) return {};
+  final retjson = retjson1['result'].where((item)=>PairStrs.contains(item['name'])).toList();
 
   Symbol Function(String) str2symbol = (String sybl) {
                             switch(sybl) {
@@ -80,7 +82,7 @@ Future<Map<Symbol, AskBidDataforTbl>> getTickerFx(Set<Symbol> pairs) async {
                           };
 
   Map<Symbol, AskBidDataforTbl> ret = {};
-  for(final item in retjson2) {
+  for(final item in retjson) {
     if(item.containsKey('name') && item.containsKey('bid') && item.containsKey('ask')) {
       Symbol sym = str2symbol(item['name']);
       ret[sym] = AskBidDataforTbl(sym, BrokerId.fx, item['ask'].toString(), item['bid'].toString());
@@ -101,9 +103,9 @@ Future<Map<Symbol, AskBidDataforTbl>> getTickerKc(Set<Symbol> pairs) async {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "POST, GET, OPTIONS, PUT, DELETE, HEAD",
   });
-  print('--------------');
-  final retjson2 = await json.decode(retRes.body)['data']['ticker'].where((item)=>PairStrs.contains(item['symbol'])).toList();
-  print(retjson2);
+  final retjson1 = await json.decode(retRes.body);
+  if(retjson1.containsKey('data') == false || retjson1['data'].containsKey('ticker') == false) return {};
+  final retjson = retjson1['data']['ticker'].where((item)=>PairStrs.contains(item['symbol'])).toList();
 
   Symbol Function(String) str2symbol = (String sybl) {
     switch(sybl) {
@@ -116,12 +118,50 @@ Future<Map<Symbol, AskBidDataforTbl>> getTickerKc(Set<Symbol> pairs) async {
   };
 
   Map<Symbol, AskBidDataforTbl> ret = {};
-  for(final item in retjson2) {
+  for(final item in retjson) {
     if(item.containsKey('symbol') && item.containsKey('buy') && item.containsKey('sell')) {
       Symbol sym = str2symbol(item['symbol']);
       ret[sym] = AskBidDataforTbl(sym, BrokerId.kc, item['sell'].toString(), item['buy'].toString());
     }
   }
 
+  return ret;
+}
+
+/* KuCoinからAsk/Bid取得 */
+Future<Map<Symbol, AskBidDataforTbl>> getTickerBs(Set<Symbol> pairs) async {
+  final Set<String> PairStrs =  pairs.map((s)=>s.str.replaceFirst("_", "").toLowerCase()).toSet();
+
+  final String endpoint = 'https://www.bitstamp.net';
+  final String method = '/api/v2/ticker';
+
+  Symbol Function(String) str2symbol = (String sybl) {
+    switch(sybl) {
+      case 'btcusdt': return Symbol.BTC_USDT;
+      case 'ethusdt': return Symbol.ETH_USDT;
+      case 'xrpusdt': return Symbol.XRP_USDT;
+      case 'bnbusdt': return Symbol.BNB_USDT;
+      default: throw Exception("例外発生!! 未サポートペア =" + sybl);
+    }
+  };
+
+  Map<Symbol, AskBidDataforTbl> ret = {};
+  for(final symbol in PairStrs) {
+    final http.Response retRes = await http.get(Uri.parse(endpoint+method+'/'+symbol+'/'), headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, GET, OPTIONS, PUT, DELETE, HEAD",
+    });
+
+    if(retRes.statusCode != 200) {
+      print('error!! http-status=' + retRes.statusCode.toString() + ' url=' + endpoint+method+'/'+symbol+'/');
+      continue;
+    }
+
+    final retjson2 = await json.decode(retRes.body);
+    if(retjson2.containsKey('ask') && retjson2.containsKey('bid')) {
+      Symbol sym = str2symbol(symbol);
+      ret[sym] = AskBidDataforTbl(sym, BrokerId.bs, retjson2['ask'].toString(), retjson2['bid'].toString());
+    }
+  }
   return ret;
 }
