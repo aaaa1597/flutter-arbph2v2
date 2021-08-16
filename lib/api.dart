@@ -16,7 +16,7 @@ Future<Map<Symbol, AskBidDataforTbl>> GetTicker(BrokerId bid) async {
     case BrokerId.fx: retjson = getTickerFx(pairs); break;
     case BrokerId.kc: retjson = getTickerKc(pairs); break;
     case BrokerId.bs: retjson = getTickerBs(pairs); break;
-    case BrokerId.pn: retjson = getTickerBi(pairs); break;
+    case BrokerId.pn: retjson = getTickerPn(pairs); break;
     case BrokerId.bt: retjson = getTickerBi(pairs); break;
     case BrokerId.ex: retjson = getTickerBi(pairs); break;
     case BrokerId.lq: retjson = getTickerBi(pairs); break;
@@ -153,7 +153,7 @@ Future<Map<Symbol, AskBidDataforTbl>> getTickerBs(Set<Symbol> pairs) async {
     });
 
     if(retRes.statusCode != 200) {
-      print('error!! http-status=' + retRes.statusCode.toString() + ' url=' + endpoint+method+'/'+symbol+'/');
+      print('warinig! http-status=' + retRes.statusCode.toString() + ' url=' + endpoint+method+'/'+symbol+'/');
       continue;
     }
 
@@ -163,5 +163,45 @@ Future<Map<Symbol, AskBidDataforTbl>> getTickerBs(Set<Symbol> pairs) async {
       ret[sym] = AskBidDataforTbl(sym, BrokerId.bs, retjson2['ask'].toString(), retjson2['bid'].toString());
     }
   }
+  return ret;
+}
+
+/* PoloniexからAsk/Bid取得 */
+Future<Map<Symbol, AskBidDataforTbl>> getTickerPn(Set<Symbol> pairs) async {
+  final Set<String> PairStrs =  pairs.map((s)=>s.str.replaceFirst("_", "-")).toSet();
+
+  final String endpoint = 'https://api.kucoin.com';
+  final String method = '/api/v1/market/allTickers';
+
+  final http.Response retRes = await http.get(Uri.parse(endpoint+method), headers: {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, GET, OPTIONS, PUT, DELETE, HEAD",
+  });
+  final retjson1 = await json.decode(retRes.body);
+
+  Symbol Function(String) str2symbol = (String sybl) {
+    switch(sybl) {
+      case 'BTC-USDT': return Symbol.BTC_USDT;
+      case 'ETH-USDT': return Symbol.ETH_USDT;
+      case 'XRP-USDT': return Symbol.XRP_USDT;
+      case 'BNB-USDT': return Symbol.BNB_USDT;
+      default: throw Exception("例外発生!! 未サポートペア =" + sybl);
+    }
+  };
+
+  if(retjson1.containsKey('code')==false || retjson1['code']!='200000') {
+    print('error! getTickerPn() retjson not has key("code") retjson=' + retjson1);
+    return {};
+  }
+  final retjson = retjson1['data']['ticker'].where((item) => PairStrs.contains(item['symbol'])).toList();
+
+  Map<Symbol, AskBidDataforTbl> ret = {};
+  retjson.forEach((item) {
+    if(item.containsKey('sell') && item.containsKey('buy')) {
+      Symbol sym = str2symbol(item['symbol']);
+      ret[sym] = AskBidDataforTbl(sym, BrokerId.kc, item['sell'].toString(), item['buy'].toString());
+    }
+  });
+
   return ret;
 }
