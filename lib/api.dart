@@ -18,8 +18,8 @@ Future<Map<Symbol, AskBidDataforTbl>> GetTicker(BrokerId bid) async {
     case BrokerId.bs: retjson = getTickerBs(pairs); break;
     case BrokerId.pn: retjson = getTickerPn(pairs); break;
     case BrokerId.bt: retjson = getTickerBt(pairs); break;
-    case BrokerId.ex: retjson = getTickerBi(pairs); break;
-    case BrokerId.lq: retjson = getTickerBi(pairs); break;
+    case BrokerId.ex: retjson = getTickerEx(pairs); break;
+    case BrokerId.lq: retjson = getTickerLq(pairs); break;
   }
 
   return retjson;
@@ -219,8 +219,6 @@ Future<Map<Symbol, AskBidDataforTbl>> getTickerBt(Set<Symbol> pairs) async {
   });
   final retjson1 = await json.decode(retRes.body);
   final retjson = retjson1.where((item) => PairStrs.contains(item['symbol'])).toList();
-  print('--------------000');
-  print(retjson);
 
   Symbol Function(String) str2symbol = (String sybl) {
     switch(sybl) {
@@ -237,6 +235,78 @@ Future<Map<Symbol, AskBidDataforTbl>> getTickerBt(Set<Symbol> pairs) async {
     if(item.containsKey('askRate') && item.containsKey('bidRate')) {
       Symbol sym = str2symbol(item['symbol']);
       ret[sym] = AskBidDataforTbl(sym, BrokerId.kc, item['askRate'].toString(), item['bidRate'].toString());
+    }
+  });
+
+  return ret;
+}
+
+/* OKExからAsk/Bid取得 */
+Future<Map<Symbol, AskBidDataforTbl>> getTickerEx(Set<Symbol> pairs) async {
+  final Set<String> PairStrs =  pairs.map((s)=>s.str.replaceFirst("_", "-")).toSet();
+
+  final String endpoint = 'https://www.okex.com';
+  final String method = '/api/spot/v3/instruments/ticker';
+
+  final http.Response retRes = await http.get(Uri.parse(endpoint+method), headers: {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, GET, OPTIONS, PUT, DELETE, HEAD",
+  });
+  final retjson1 = await json.decode(retRes.body);
+  final retjson = retjson1.where((item) => PairStrs.contains(item['product_id'])).toList();
+
+  Symbol Function(String) str2symbol = (String sybl) {
+    switch(sybl) {
+      case 'BTC-USDT': return Symbol.BTC_USDT;
+      case 'ETH-USDT': return Symbol.ETH_USDT;
+      case 'XRP-USDT': return Symbol.XRP_USDT;
+      case 'BNB-USDT': return Symbol.BNB_USDT;
+      default: throw Exception("例外発生!! 未サポートペア =" + sybl);
+    }
+  };
+
+  Map<Symbol, AskBidDataforTbl> ret = {};
+  retjson.forEach((item) {
+    if(item.containsKey('ask') && item.containsKey('bid')) {
+      Symbol sym = str2symbol(item['product_id']);
+      ret[sym] = AskBidDataforTbl(sym, BrokerId.kc, item['ask'].toString(), item['bid'].toString());
+    }
+  });
+
+  return ret;
+}
+
+/* LiquidからAsk/Bid取得 */
+Future<Map<Symbol, AskBidDataforTbl>> getTickerLq(Set<Symbol> pairs) async {
+  final Set<String> PairStrs =  pairs.map((s)=>s.str.replaceFirst("_", "")).toSet();
+
+  final String endpoint = 'https://api.liquid.com';
+  final String method = '/products';
+
+  final http.Response retRes = await http.get(Uri.parse(endpoint+method), headers: {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, GET, OPTIONS, PUT, DELETE, HEAD",
+  });
+  final retjson1 = await json.decode(retRes.body);
+  final retjson = retjson1.where((item) => PairStrs.contains(item['currency_pair_code'])).toList();
+  print('--------------000');
+  print(retjson);
+
+  Symbol Function(String) str2symbol = (String sybl) {
+    switch(sybl) {
+      case 'BTCUSDT': return Symbol.BTC_USDT;
+      case 'ETHUSDT': return Symbol.ETH_USDT;
+      case 'XRPUSDT': return Symbol.XRP_USDT;
+      case 'BNBUSDT': return Symbol.BNB_USDT;
+      default: throw Exception("例外発生!! 未サポートペア =" + sybl);
+    }
+  };
+
+  Map<Symbol, AskBidDataforTbl> ret = {};
+  retjson.forEach((item) {
+    if(item.containsKey('market_ask') && item.containsKey('market_bid')) {
+      Symbol sym = str2symbol(item['currency_pair_code']);
+      ret[sym] = AskBidDataforTbl(sym, BrokerId.kc, item['market_ask'].toString(), item['market_bid'].toString());
     }
   });
 
