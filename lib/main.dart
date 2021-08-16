@@ -63,10 +63,10 @@ class _HomePage extends StatelessWidget {
                           ],),
                       ),
                       /* \u{2252}...≒ */
-                      SelectableText('※0.0005[BTC]\u{2252}2,000(円)　※0.003[ETH]\u{2252}1,030(円)　※0.2[XRP]\u{2252}18(円)　※0.02[BNB]\u{2252}780(円)',),
                     ],
                   ),
                 ),
+                SelectableText('※0.0005[BTC]\u{2252}2,000(円)　※0.003[ETH]\u{2252}1,030(円)　※0.2[XRP]\u{2252}18(円)　※0.02[BNB]\u{2252}780(円)',),
                 SelectableText('\n\n通貨ペアの現在値', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),),
                 Center(
                   child: Column(
