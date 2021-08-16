@@ -17,7 +17,7 @@ Future<Map<Symbol, AskBidDataforTbl>> GetTicker(BrokerId bid) async {
     case BrokerId.kc: retjson = getTickerKc(pairs); break;
     case BrokerId.bs: retjson = getTickerBs(pairs); break;
     case BrokerId.pn: retjson = getTickerPn(pairs); break;
-    case BrokerId.bt: retjson = getTickerBi(pairs); break;
+    case BrokerId.bt: retjson = getTickerBt(pairs); break;
     case BrokerId.ex: retjson = getTickerBi(pairs); break;
     case BrokerId.lq: retjson = getTickerBi(pairs); break;
   }
@@ -200,6 +200,43 @@ Future<Map<Symbol, AskBidDataforTbl>> getTickerPn(Set<Symbol> pairs) async {
     if(item.containsKey('sell') && item.containsKey('buy')) {
       Symbol sym = str2symbol(item['symbol']);
       ret[sym] = AskBidDataforTbl(sym, BrokerId.kc, item['sell'].toString(), item['buy'].toString());
+    }
+  });
+
+  return ret;
+}
+
+/* BitTrexからAsk/Bid取得 */
+Future<Map<Symbol, AskBidDataforTbl>> getTickerBt(Set<Symbol> pairs) async {
+  final Set<String> PairStrs =  pairs.map((s)=>s.str.replaceFirst("_", "-")).toSet();
+
+  final String endpoint = 'https://api.bittrex.com/v3';
+  final String method = '/markets/tickers';
+
+  final http.Response retRes = await http.get(Uri.parse(endpoint+method), headers: {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, GET, OPTIONS, PUT, DELETE, HEAD",
+  });
+  final retjson1 = await json.decode(retRes.body);
+  final retjson = retjson1.where((item) => PairStrs.contains(item['symbol'])).toList();
+  print('--------------000');
+  print(retjson);
+
+  Symbol Function(String) str2symbol = (String sybl) {
+    switch(sybl) {
+      case 'BTC-USDT': return Symbol.BTC_USDT;
+      case 'ETH-USDT': return Symbol.ETH_USDT;
+      case 'XRP-USDT': return Symbol.XRP_USDT;
+      case 'BNB-USDT': return Symbol.BNB_USDT;
+      default: throw Exception("例外発生!! 未サポートペア =" + sybl);
+    }
+  };
+
+  Map<Symbol, AskBidDataforTbl> ret = {};
+  retjson.forEach((item) {
+    if(item.containsKey('askRate') && item.containsKey('bidRate')) {
+      Symbol sym = str2symbol(item['symbol']);
+      ret[sym] = AskBidDataforTbl(sym, BrokerId.kc, item['askRate'].toString(), item['bidRate'].toString());
     }
   });
 
