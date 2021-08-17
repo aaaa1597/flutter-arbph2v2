@@ -18,3 +18,27 @@ class AskBidDataforTbl {
   final String askstr;
   final String bidstr;
 }
+
+/* Ask/Bid取得結果(Loading中) */
+final Map<BrokerId, Map<Symbol, AskBidDataforTbl>> loadingret = {
+   BrokerId.bi : {Symbol.BTC_USDT:AskBidDataforTbl(Symbol.BTC_USDT, BrokerId.bi, '...', '...'), Symbol.ETH_USDT:AskBidDataforTbl(Symbol.ETH_USDT, BrokerId.bi, '...', '...'), Symbol.XRP_USDT:AskBidDataforTbl(Symbol.XRP_USDT, BrokerId.bi, '...', '...'), Symbol.BNB_USDT:AskBidDataforTbl(Symbol.BNB_USDT, BrokerId.bi, '...', '...')}
+  ,BrokerId.fx : {Symbol.BTC_USDT:AskBidDataforTbl(Symbol.BTC_USDT, BrokerId.fx, '...', '...'), Symbol.ETH_USDT:AskBidDataforTbl(Symbol.ETH_USDT, BrokerId.fx, '...', '...'), Symbol.XRP_USDT:AskBidDataforTbl(Symbol.XRP_USDT, BrokerId.fx, '...', '...'), Symbol.BNB_USDT:AskBidDataforTbl(Symbol.BNB_USDT, BrokerId.fx, '...', '...')}
+  ,BrokerId.kc : {Symbol.BTC_USDT:AskBidDataforTbl(Symbol.BTC_USDT, BrokerId.kc, '...', '...'), Symbol.ETH_USDT:AskBidDataforTbl(Symbol.ETH_USDT, BrokerId.kc, '...', '...'), Symbol.XRP_USDT:AskBidDataforTbl(Symbol.XRP_USDT, BrokerId.kc, '...', '...'), Symbol.BNB_USDT:AskBidDataforTbl(Symbol.BNB_USDT, BrokerId.kc, '...', '...')}
+  ,BrokerId.bs : {Symbol.BTC_USDT:AskBidDataforTbl(Symbol.BTC_USDT, BrokerId.bs, '...', '...'), Symbol.ETH_USDT:AskBidDataforTbl(Symbol.ETH_USDT, BrokerId.bs, '...', '...'), Symbol.XRP_USDT:AskBidDataforTbl(Symbol.XRP_USDT, BrokerId.bs, '...', '...'), Symbol.BNB_USDT:AskBidDataforTbl(Symbol.BNB_USDT, BrokerId.bs, '...', '...')}
+  ,BrokerId.pn : {Symbol.BTC_USDT:AskBidDataforTbl(Symbol.BTC_USDT, BrokerId.pn, '...', '...'), Symbol.ETH_USDT:AskBidDataforTbl(Symbol.ETH_USDT, BrokerId.pn, '...', '...'), Symbol.XRP_USDT:AskBidDataforTbl(Symbol.XRP_USDT, BrokerId.pn, '...', '...'), Symbol.BNB_USDT:AskBidDataforTbl(Symbol.BNB_USDT, BrokerId.pn, '...', '...')}
+  ,BrokerId.bt : {Symbol.BTC_USDT:AskBidDataforTbl(Symbol.BTC_USDT, BrokerId.bt, '...', '...'), Symbol.ETH_USDT:AskBidDataforTbl(Symbol.ETH_USDT, BrokerId.bt, '...', '...'), Symbol.XRP_USDT:AskBidDataforTbl(Symbol.XRP_USDT, BrokerId.bt, '...', '...'), Symbol.BNB_USDT:AskBidDataforTbl(Symbol.BNB_USDT, BrokerId.bt, '...', '...')}
+  ,BrokerId.ex : {Symbol.BTC_USDT:AskBidDataforTbl(Symbol.BTC_USDT, BrokerId.ex, '...', '...'), Symbol.ETH_USDT:AskBidDataforTbl(Symbol.ETH_USDT, BrokerId.ex, '...', '...'), Symbol.XRP_USDT:AskBidDataforTbl(Symbol.XRP_USDT, BrokerId.ex, '...', '...'), Symbol.BNB_USDT:AskBidDataforTbl(Symbol.BNB_USDT, BrokerId.ex, '...', '...')}
+  ,BrokerId.lq : {Symbol.BTC_USDT:AskBidDataforTbl(Symbol.BTC_USDT, BrokerId.lq, '...', '...'), Symbol.ETH_USDT:AskBidDataforTbl(Symbol.ETH_USDT, BrokerId.lq, '...', '...'), Symbol.XRP_USDT:AskBidDataforTbl(Symbol.XRP_USDT, BrokerId.lq, '...', '...'), Symbol.BNB_USDT:AskBidDataforTbl(Symbol.BNB_USDT, BrokerId.lq, '...', '...')}
+};
+
+/* Ask/Bid取得結果(エラー応答) */
+final Map<BrokerId, Map<Symbol, AskBidDataforTbl>> errret = {
+   BrokerId.bi : {Symbol.BTC_USDT:AskBidDataforTbl(Symbol.BTC_USDT, BrokerId.bi, '---', '---'), Symbol.ETH_USDT:AskBidDataforTbl(Symbol.ETH_USDT, BrokerId.bi, '---', '---'), Symbol.XRP_USDT:AskBidDataforTbl(Symbol.XRP_USDT, BrokerId.bi, '---', '---'), Symbol.BNB_USDT:AskBidDataforTbl(Symbol.BNB_USDT, BrokerId.bi, '---', '---')}
+  ,BrokerId.fx : {Symbol.BTC_USDT:AskBidDataforTbl(Symbol.BTC_USDT, BrokerId.fx, '---', '---'), Symbol.ETH_USDT:AskBidDataforTbl(Symbol.ETH_USDT, BrokerId.fx, '---', '---'), Symbol.XRP_USDT:AskBidDataforTbl(Symbol.XRP_USDT, BrokerId.fx, '---', '---'), Symbol.BNB_USDT:AskBidDataforTbl(Symbol.BNB_USDT, BrokerId.fx, '---', '---')}
+  ,BrokerId.kc : {Symbol.BTC_USDT:AskBidDataforTbl(Symbol.BTC_USDT, BrokerId.kc, '---', '---'), Symbol.ETH_USDT:AskBidDataforTbl(Symbol.ETH_USDT, BrokerId.kc, '---', '---'), Symbol.XRP_USDT:AskBidDataforTbl(Symbol.XRP_USDT, BrokerId.kc, '---', '---'), Symbol.BNB_USDT:AskBidDataforTbl(Symbol.BNB_USDT, BrokerId.kc, '---', '---')}
+  ,BrokerId.bs : {Symbol.BTC_USDT:AskBidDataforTbl(Symbol.BTC_USDT, BrokerId.bs, '---', '---'), Symbol.ETH_USDT:AskBidDataforTbl(Symbol.ETH_USDT, BrokerId.bs, '---', '---'), Symbol.XRP_USDT:AskBidDataforTbl(Symbol.XRP_USDT, BrokerId.bs, '---', '---'), Symbol.BNB_USDT:AskBidDataforTbl(Symbol.BNB_USDT, BrokerId.bs, '---', '---')}
+  ,BrokerId.pn : {Symbol.BTC_USDT:AskBidDataforTbl(Symbol.BTC_USDT, BrokerId.pn, '---', '---'), Symbol.ETH_USDT:AskBidDataforTbl(Symbol.ETH_USDT, BrokerId.pn, '---', '---'), Symbol.XRP_USDT:AskBidDataforTbl(Symbol.XRP_USDT, BrokerId.pn, '---', '---'), Symbol.BNB_USDT:AskBidDataforTbl(Symbol.BNB_USDT, BrokerId.pn, '---', '---')}
+  ,BrokerId.bt : {Symbol.BTC_USDT:AskBidDataforTbl(Symbol.BTC_USDT, BrokerId.bt, '---', '---'), Symbol.ETH_USDT:AskBidDataforTbl(Symbol.ETH_USDT, BrokerId.bt, '---', '---'), Symbol.XRP_USDT:AskBidDataforTbl(Symbol.XRP_USDT, BrokerId.bt, '---', '---'), Symbol.BNB_USDT:AskBidDataforTbl(Symbol.BNB_USDT, BrokerId.bt, '---', '---')}
+  ,BrokerId.ex : {Symbol.BTC_USDT:AskBidDataforTbl(Symbol.BTC_USDT, BrokerId.ex, '---', '---'), Symbol.ETH_USDT:AskBidDataforTbl(Symbol.ETH_USDT, BrokerId.ex, '---', '---'), Symbol.XRP_USDT:AskBidDataforTbl(Symbol.XRP_USDT, BrokerId.ex, '---', '---'), Symbol.BNB_USDT:AskBidDataforTbl(Symbol.BNB_USDT, BrokerId.ex, '---', '---')}
+  ,BrokerId.lq : {Symbol.BTC_USDT:AskBidDataforTbl(Symbol.BTC_USDT, BrokerId.lq, '---', '---'), Symbol.ETH_USDT:AskBidDataforTbl(Symbol.ETH_USDT, BrokerId.lq, '---', '---'), Symbol.XRP_USDT:AskBidDataforTbl(Symbol.XRP_USDT, BrokerId.lq, '---', '---'), Symbol.BNB_USDT:AskBidDataforTbl(Symbol.BNB_USDT, BrokerId.lq, '---', '---')}
+};

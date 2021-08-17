@@ -289,8 +289,6 @@ Future<Map<Symbol, AskBidDataforTbl>> getTickerLq(Set<Symbol> pairs) async {
   });
   final retjson1 = await json.decode(retRes.body);
   final retjson = retjson1.where((item) => PairStrs.contains(item['currency_pair_code'])).toList();
-  print('--------------000');
-  print(retjson);
 
   Symbol Function(String) str2symbol = (String sybl) {
     switch(sybl) {
