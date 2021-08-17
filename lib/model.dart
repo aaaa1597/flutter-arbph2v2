@@ -19,6 +19,21 @@ class AskBidDataforTbl {
   final String bidstr;
 }
 
+/* Ask/Bid取得結果 */
+class AskBidData {
+  AskBidData(this.symbol, this.id, this.ask, this.bid);
+  AskBidData.formAskBidDataforTbl(AskBidDataforTbl askbidfortbl) : this.symbol=askbidfortbl.symbol, this.id=askbidfortbl.id, this.ask=isNumeric(askbidfortbl.askstr)?double.parse(askbidfortbl.askstr):99999999, this.bid=isNumeric(askbidfortbl.bidstr)?double.parse(askbidfortbl.bidstr):0;
+  static bool isNumeric(String s) {
+    if(s == null) return false;
+    try { double tmpval = double.parse(s); return true;}
+    catch (exception) { return false; }
+  }
+  final Symbol symbol;
+  final BrokerId id;
+  final double ask;
+  final double bid;
+}
+
 /* Ask/Bid取得結果(Loading中) */
 final Map<BrokerId, Map<Symbol, AskBidDataforTbl>> loadingret = {
    BrokerId.bi : {Symbol.BTC_USDT:AskBidDataforTbl(Symbol.BTC_USDT, BrokerId.bi, '...', '...'), Symbol.ETH_USDT:AskBidDataforTbl(Symbol.ETH_USDT, BrokerId.bi, '...', '...'), Symbol.XRP_USDT:AskBidDataforTbl(Symbol.XRP_USDT, BrokerId.bi, '...', '...'), Symbol.BNB_USDT:AskBidDataforTbl(Symbol.BNB_USDT, BrokerId.bi, '...', '...')}

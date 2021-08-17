@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -75,7 +76,7 @@ class _HomePage extends StatelessWidget {
                 Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
+                    children: [
                       Padding(
                         padding: EdgeInsets.all(10),
                         child: _AskBidTable(),
@@ -84,6 +85,9 @@ class _HomePage extends StatelessWidget {
                   ),
                 ),
                 SelectableText('※"***":市場なし',),
+                /* 投資金額(50000円) */
+                SelectableText("\n投資金額(円) : 50000円(固定)"),
+                SelectableText("USDT換算: 500＄ (※1＄=¥100で計算)"),
                 /* 見込み利益(BTC/USDT) */
                 SelectableText('\n\n見込み利益(BTC/USDT)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),),
                 Center(
@@ -140,6 +144,41 @@ class _AskBidTable extends HookWidget {
     final retAskBidsbt = AskBidsbt.when(data: (ret) => ret, loading: () => loadingret[BrokerId.bt], error: (e, stack) => errret[BrokerId.bt]);
     final retAskBidsex = AskBidsex.when(data: (ret) => ret, loading: () => loadingret[BrokerId.ex], error: (e, stack) => errret[BrokerId.ex]);
     final retAskBidslq = AskBidslq.when(data: (ret) => ret, loading: () => loadingret[BrokerId.lq], error: (e, stack) => errret[BrokerId.lq]);
+
+    Map<BrokerId, Map<Symbol, AskBidData>> temp = context.read(expectedProfitProvider).state;
+    temp[BrokerId.bi] = { Symbol.BTC_USDT: AskBidData.formAskBidDataforTbl(retAskBidsbi[Symbol.BTC_USDT]),
+                          Symbol.ETH_USDT: AskBidData.formAskBidDataforTbl(retAskBidsbi[Symbol.ETH_USDT]),
+                          Symbol.XRP_USDT: AskBidData.formAskBidDataforTbl(retAskBidsbi[Symbol.XRP_USDT]),
+                          Symbol.BNB_USDT: AskBidData.formAskBidDataforTbl(retAskBidsbi[Symbol.BNB_USDT]),};
+    temp[BrokerId.fx] = { Symbol.BTC_USDT: AskBidData.formAskBidDataforTbl(retAskBidsfx[Symbol.BTC_USDT]),
+                          Symbol.ETH_USDT: AskBidData.formAskBidDataforTbl(retAskBidsfx[Symbol.ETH_USDT]),
+                          Symbol.XRP_USDT: AskBidData.formAskBidDataforTbl(retAskBidsfx[Symbol.XRP_USDT]),
+                          Symbol.BNB_USDT: AskBidData.formAskBidDataforTbl(retAskBidsfx[Symbol.BNB_USDT]),};
+    temp[BrokerId.kc] = { Symbol.BTC_USDT: AskBidData.formAskBidDataforTbl(retAskBidskc[Symbol.BTC_USDT]),
+                          Symbol.ETH_USDT: AskBidData.formAskBidDataforTbl(retAskBidskc[Symbol.ETH_USDT]),
+                          Symbol.XRP_USDT: AskBidData.formAskBidDataforTbl(retAskBidskc[Symbol.XRP_USDT]),
+                          Symbol.BNB_USDT: AskBidData.formAskBidDataforTbl(retAskBidskc[Symbol.BNB_USDT]),};
+    temp[BrokerId.bs] = { Symbol.BTC_USDT: AskBidData.formAskBidDataforTbl(retAskBidsbs[Symbol.BTC_USDT]),
+                          Symbol.ETH_USDT: AskBidData.formAskBidDataforTbl(retAskBidsbs[Symbol.ETH_USDT]),
+                          Symbol.XRP_USDT: AskBidData.formAskBidDataforTbl(retAskBidsbs[Symbol.XRP_USDT]),};
+                          if(retAskBidsbs[Symbol.BNB_USDT] != null) temp[BrokerId.bs]?[Symbol.BNB_USDT] = AskBidData.formAskBidDataforTbl(retAskBidsbs[Symbol.BNB_USDT]);
+    temp[BrokerId.pn] = { Symbol.BTC_USDT: AskBidData.formAskBidDataforTbl(retAskBidspn[Symbol.BTC_USDT]),
+                          Symbol.ETH_USDT: AskBidData.formAskBidDataforTbl(retAskBidspn[Symbol.ETH_USDT]),
+                          Symbol.XRP_USDT: AskBidData.formAskBidDataforTbl(retAskBidspn[Symbol.XRP_USDT]),
+                          Symbol.BNB_USDT: AskBidData.formAskBidDataforTbl(retAskBidspn[Symbol.BNB_USDT]),};
+    temp[BrokerId.bt] = { Symbol.BTC_USDT: AskBidData.formAskBidDataforTbl(retAskBidsbt[Symbol.BTC_USDT]),
+                          Symbol.ETH_USDT: AskBidData.formAskBidDataforTbl(retAskBidsbt[Symbol.ETH_USDT]),
+                          Symbol.XRP_USDT: AskBidData.formAskBidDataforTbl(retAskBidsbt[Symbol.XRP_USDT]),};
+                          if(retAskBidsbt[Symbol.BNB_USDT] != null) temp[BrokerId.bt]?[Symbol.BNB_USDT] = AskBidData.formAskBidDataforTbl(retAskBidsbt[Symbol.BNB_USDT]);
+    temp[BrokerId.ex] = { Symbol.BTC_USDT: AskBidData.formAskBidDataforTbl(retAskBidsex[Symbol.BTC_USDT]),
+                          Symbol.ETH_USDT: AskBidData.formAskBidDataforTbl(retAskBidsex[Symbol.ETH_USDT]),
+                          Symbol.XRP_USDT: AskBidData.formAskBidDataforTbl(retAskBidsex[Symbol.XRP_USDT]),};
+                          if(retAskBidsex[Symbol.BNB_USDT] != null) temp[BrokerId.ex]?[Symbol.BNB_USDT] = AskBidData.formAskBidDataforTbl(retAskBidsex[Symbol.BNB_USDT]);
+    temp[BrokerId.lq] = { Symbol.BTC_USDT: AskBidData.formAskBidDataforTbl(retAskBidslq[Symbol.BTC_USDT]),
+                          Symbol.ETH_USDT: AskBidData.formAskBidDataforTbl(retAskBidslq[Symbol.ETH_USDT]),};
+                          if(retAskBidslq[Symbol.XRP_USDT] != null) temp[BrokerId.lq]?[Symbol.XRP_USDT] = AskBidData.formAskBidDataforTbl(retAskBidslq[Symbol.XRP_USDT]);
+                          if(retAskBidslq[Symbol.BNB_USDT] != null) temp[BrokerId.lq]?[Symbol.BNB_USDT] = AskBidData.formAskBidDataforTbl(retAskBidslq[Symbol.BNB_USDT]);
+    // context.read(expectedProfitProvider).state = temp;
 
     return Table(
       border: TableBorder.all(),
@@ -223,111 +262,91 @@ class _AskBidTable extends HookWidget {
   }
 }
 
+/* Ask/Bidの非同期取得で設定->利益計算する。 */
+final StateProvider<Map<BrokerId, Map<Symbol, AskBidData>>> expectedProfitProvider = StateProvider<Map<BrokerId, Map<Symbol, AskBidData>>>((ref) => {});
+
 class _ExpectedProfitTable extends HookWidget {
   @override
   Widget build(BuildContext context) {
-    /* 10sタイマ起動 */
-    useEffect((){ Timer.periodic(Duration(seconds: 10),(timer){
-      print('10sタイマ発火--------' + DateTime.now().toString());
-      context.read(timeoutEventProvider).state++;
-    },); }, const []);
-
-    final AskBidsbi = useProvider(askbidProvider(BrokerId.bi));
-    final AskBidsfx = useProvider(askbidProvider(BrokerId.fx));
-    final AskBidskc = useProvider(askbidProvider(BrokerId.kc));
-    final AskBidsbs = useProvider(askbidProvider(BrokerId.bs));
-    final AskBidspn = useProvider(askbidProvider(BrokerId.pn));
-    final AskBidsbt = useProvider(askbidProvider(BrokerId.bt));
-    final AskBidsex = useProvider(askbidProvider(BrokerId.ex));
-    final AskBidslq = useProvider(askbidProvider(BrokerId.lq));
-
-    final retAskBidsbi = AskBidsbi.when(data: (ret) => ret, loading: () => loadingret[BrokerId.bi], error: (e, stack) => errret[BrokerId.bi]);
-    final retAskBidsfx = AskBidsfx.when(data: (ret) => ret, loading: () => loadingret[BrokerId.fx], error: (e, stack) => errret[BrokerId.fx]);
-    final retAskBidskc = AskBidskc.when(data: (ret) => ret, loading: () => loadingret[BrokerId.kc], error: (e, stack) => errret[BrokerId.kc]);
-    final retAskBidsbs = AskBidsbs.when(data: (ret) => ret, loading: () => loadingret[BrokerId.bs], error: (e, stack) => errret[BrokerId.bs]);
-    final retAskBidspn = AskBidspn.when(data: (ret) => ret, loading: () => loadingret[BrokerId.pn], error: (e, stack) => errret[BrokerId.pn]);
-    final retAskBidsbt = AskBidsbt.when(data: (ret) => ret, loading: () => loadingret[BrokerId.bt], error: (e, stack) => errret[BrokerId.bt]);
-    final retAskBidsex = AskBidsex.when(data: (ret) => ret, loading: () => loadingret[BrokerId.ex], error: (e, stack) => errret[BrokerId.ex]);
-    final retAskBidslq = AskBidslq.when(data: (ret) => ret, loading: () => loadingret[BrokerId.lq], error: (e, stack) => errret[BrokerId.lq]);
+    final expectedProfitData = useProvider(expectedProfitProvider);
 
     return Table(
       border: TableBorder.all(),
       /* Riverpod で状態管理を行う */
       children: [
-        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("通貨ペア")),Padding(padding: EdgeInsets.all(4.0),child: SelectableText("BTC/USDT")),SelectableText("")                                                 ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText("ETH/USDT")) ,SelectableText("")                                                 ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText("XRP/USDT")) ,SelectableText("")                                                 ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText("BNB/USDT")),SelectableText("")                                                ,]),
-        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("業者"))   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Bid"))     ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Ask")) ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Bid"))      ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Ask")) ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Bid"))      ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Ask")) ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Bid"))     ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Ask")),]),
+        TableRow(children: [SelectableText(""), Padding(padding: EdgeInsets.all(4.0),child: SelectableText("送金1(送金手数料[USDT])")), Padding(padding: EdgeInsets.all(4.0),child: SelectableText("買い業者")), Padding(padding: EdgeInsets.all(4.0),child: SelectableText("買い[BTC]")), Padding(padding: EdgeInsets.all(4.0),child: SelectableText("送金2(送金手数料[BTC])")), Padding(padding: EdgeInsets.all(4.0),child: SelectableText("売り業者")), Padding(padding: EdgeInsets.all(4.0),child: SelectableText("売り(儲け[USDT])")),]),
         /******************************************/
-        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Binance")) ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.BTC_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.BTC_USDT].askstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.ETH_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.ETH_USDT].askstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.XRP_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.XRP_USDT].askstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.BNB_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.BNB_USDT].askstr)),]),
-        /******************************************/
-        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("FTX"))     ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.BTC_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.BTC_USDT].askstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.ETH_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.ETH_USDT].askstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.XRP_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.XRP_USDT].askstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.BNB_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.BNB_USDT].askstr)),]),
-        /******************************************/
-        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("KuCoin"))  ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.BTC_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.BTC_USDT].askstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.ETH_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.ETH_USDT].askstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.XRP_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.XRP_USDT].askstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.BNB_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.BNB_USDT].askstr)),]),
-        /******************************************/
-        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Bitstamp")),Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbs[Symbol.BTC_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbs[Symbol.BTC_USDT].askstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbs[Symbol.ETH_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbs[Symbol.ETH_USDT].askstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbs[Symbol.XRP_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbs[Symbol.XRP_USDT].askstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***'))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***')),]),
-        /******************************************/
-        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Poloniex")),Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.BTC_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.BTC_USDT].askstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.ETH_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.ETH_USDT].askstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.XRP_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.XRP_USDT].askstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.BNB_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.BNB_USDT].askstr)),]),
-        /******************************************/
-        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Bittrex")) ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbt[Symbol.BTC_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbt[Symbol.BTC_USDT].askstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbt[Symbol.ETH_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbt[Symbol.ETH_USDT].askstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbt[Symbol.XRP_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbt[Symbol.XRP_USDT].askstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***'))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***')),]),
-        /******************************************/
-        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("OKEx"))    ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsex[Symbol.BTC_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsex[Symbol.BTC_USDT].askstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsex[Symbol.ETH_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsex[Symbol.ETH_USDT].askstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsex[Symbol.XRP_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsex[Symbol.XRP_USDT].askstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***'))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***')),]),
-        /******************************************/
-        TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Liquid"))  ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidslq[Symbol.BTC_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidslq[Symbol.BTC_USDT].askstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidslq[Symbol.ETH_USDT].bidstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidslq[Symbol.ETH_USDT].askstr))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***'))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***'))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***'))
-          ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***')),]),
+        // TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Binance")) ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.BTC_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.BTC_USDT].askstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.ETH_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.ETH_USDT].askstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.XRP_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.XRP_USDT].askstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.BNB_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.BNB_USDT].askstr)),]),
+        // /******************************************/
+        // TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("FTX"))     ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.BTC_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.BTC_USDT].askstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.ETH_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.ETH_USDT].askstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.XRP_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.XRP_USDT].askstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.BNB_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.BNB_USDT].askstr)),]),
+        // /******************************************/
+        // TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("KuCoin"))  ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.BTC_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.BTC_USDT].askstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.ETH_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.ETH_USDT].askstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.XRP_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.XRP_USDT].askstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.BNB_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.BNB_USDT].askstr)),]),
+        // /******************************************/
+        // TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Bitstamp")),Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbs[Symbol.BTC_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbs[Symbol.BTC_USDT].askstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbs[Symbol.ETH_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbs[Symbol.ETH_USDT].askstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbs[Symbol.XRP_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbs[Symbol.XRP_USDT].askstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***'))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***')),]),
+        // /******************************************/
+        // TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Poloniex")),Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.BTC_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.BTC_USDT].askstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.ETH_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.ETH_USDT].askstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.XRP_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.XRP_USDT].askstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.BNB_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.BNB_USDT].askstr)),]),
+        // /******************************************/
+        // TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Bittrex")) ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbt[Symbol.BTC_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbt[Symbol.BTC_USDT].askstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbt[Symbol.ETH_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbt[Symbol.ETH_USDT].askstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbt[Symbol.XRP_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbt[Symbol.XRP_USDT].askstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***'))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***')),]),
+        // /******************************************/
+        // TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("OKEx"))    ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsex[Symbol.BTC_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsex[Symbol.BTC_USDT].askstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsex[Symbol.ETH_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsex[Symbol.ETH_USDT].askstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsex[Symbol.XRP_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsex[Symbol.XRP_USDT].askstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***'))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***')),]),
+        // /******************************************/
+        // TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Liquid"))  ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidslq[Symbol.BTC_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidslq[Symbol.BTC_USDT].askstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidslq[Symbol.ETH_USDT].bidstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidslq[Symbol.ETH_USDT].askstr))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***'))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***'))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***'))
+        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***')),]),
       ],);
   }
 }
