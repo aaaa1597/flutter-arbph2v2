@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -89,12 +90,22 @@ class _HomePage extends StatelessWidget {
 }
 
 final FutureProviderFamily askbidProvider = FutureProvider.family<Map<Symbol, AskBidDataforTbl>, BrokerId>((ref, bid) {
+  ref.watch(timeoutEventProvider);
   return GetTicker(bid);
 });
 
+/* 10sタイマ発火を受けて値更新 */
+final timeoutEventProvider = StateProvider<int>((ref) => 0);
+
 class _AskBidTable extends HookWidget {
   @override
-  Widget build(BuildContext conSelectableText) {
+  Widget build(BuildContext context) {
+    /* 10sタイマ起動 */
+    useEffect((){ Timer.periodic(Duration(seconds: 10),(timer){
+      print('10sタイマ発火--------' + DateTime.now().toString());
+      context.read(timeoutEventProvider).state++;
+    },); }, const []);
+
     final AskBidsbi = useProvider(askbidProvider(BrokerId.bi));
     final AskBidsfx = useProvider(askbidProvider(BrokerId.fx));
     final AskBidskc = useProvider(askbidProvider(BrokerId.kc));
