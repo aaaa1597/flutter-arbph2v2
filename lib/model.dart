@@ -57,3 +57,21 @@ final Map<BrokerId, Map<Symbol, AskBidDataforTbl>> errret = {
   ,BrokerId.ex : {Symbol.BTC_USDT:AskBidDataforTbl(Symbol.BTC_USDT, BrokerId.ex, '---', '---'), Symbol.ETH_USDT:AskBidDataforTbl(Symbol.ETH_USDT, BrokerId.ex, '---', '---'), Symbol.XRP_USDT:AskBidDataforTbl(Symbol.XRP_USDT, BrokerId.ex, '---', '---'), Symbol.BNB_USDT:AskBidDataforTbl(Symbol.BNB_USDT, BrokerId.ex, '---', '---')}
   ,BrokerId.lq : {Symbol.BTC_USDT:AskBidDataforTbl(Symbol.BTC_USDT, BrokerId.lq, '---', '---'), Symbol.ETH_USDT:AskBidDataforTbl(Symbol.ETH_USDT, BrokerId.lq, '---', '---'), Symbol.XRP_USDT:AskBidDataforTbl(Symbol.XRP_USDT, BrokerId.lq, '---', '---'), Symbol.BNB_USDT:AskBidDataforTbl(Symbol.BNB_USDT, BrokerId.lq, '---', '---')}
 };
+
+class AskBidInfo {
+   Map<BrokerId, Map<Symbol, AskBidData>> _data;
+  /* インスタンスのキャッシュ */
+  static final AskBidInfo _instance = AskBidInfo._internal();
+  /* ファクトリーコンストラクタ */
+  factory AskBidInfo() => _instance;
+  /* 内部から呼び出してインスタンスを作る為のコンストラクタ */
+   AskBidInfo._internal() : this._data = {};
+  /* setter */
+  set data(Map<BrokerId, Map<Symbol, AskBidData>> data) {
+    this._data = data;
+  }
+   Map<BrokerId, Map<Symbol, AskBidData>> get data {
+     return this._data;
+   }
+}
+

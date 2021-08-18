@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:spannable_grid/spannable_grid.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -145,7 +145,7 @@ class _AskBidTable extends HookWidget {
     final retAskBidsex = AskBidsex.when(data: (ret) => ret, loading: () => loadingret[BrokerId.ex], error: (e, stack) => errret[BrokerId.ex]);
     final retAskBidslq = AskBidslq.when(data: (ret) => ret, loading: () => loadingret[BrokerId.lq], error: (e, stack) => errret[BrokerId.lq]);
 
-    Map<BrokerId, Map<Symbol, AskBidData>> temp = context.read(expectedProfitProvider).state;
+    Map<BrokerId, Map<Symbol, AskBidData>> temp = {};
     temp[BrokerId.bi] = { Symbol.BTC_USDT: AskBidData.formAskBidDataforTbl(retAskBidsbi[Symbol.BTC_USDT]),
                           Symbol.ETH_USDT: AskBidData.formAskBidDataforTbl(retAskBidsbi[Symbol.ETH_USDT]),
                           Symbol.XRP_USDT: AskBidData.formAskBidDataforTbl(retAskBidsbi[Symbol.XRP_USDT]),
@@ -178,7 +178,11 @@ class _AskBidTable extends HookWidget {
                           Symbol.ETH_USDT: AskBidData.formAskBidDataforTbl(retAskBidslq[Symbol.ETH_USDT]),};
                           if(retAskBidslq[Symbol.XRP_USDT] != null) temp[BrokerId.lq]?[Symbol.XRP_USDT] = AskBidData.formAskBidDataforTbl(retAskBidslq[Symbol.XRP_USDT]);
                           if(retAskBidslq[Symbol.BNB_USDT] != null) temp[BrokerId.lq]?[Symbol.BNB_USDT] = AskBidData.formAskBidDataforTbl(retAskBidslq[Symbol.BNB_USDT]);
-    // context.read(expectedProfitProvider).state = temp;
+    AskBidInfo().data = temp;
+    Future upd() async {
+      Timer(Duration(seconds: 1), () => context.read(expectedProfitProvider).state++);
+    };
+    upd();
 
     return Table(
       border: TableBorder.all(),
@@ -263,90 +267,105 @@ class _AskBidTable extends HookWidget {
 }
 
 /* Ask/Bidの非同期取得で設定->利益計算する。 */
-final StateProvider<Map<BrokerId, Map<Symbol, AskBidData>>> expectedProfitProvider = StateProvider<Map<BrokerId, Map<Symbol, AskBidData>>>((ref) => {});
+final StateProvider<int> expectedProfitProvider = StateProvider<int>((ref) => 0);
 
 class _ExpectedProfitTable extends HookWidget {
   @override
   Widget build(BuildContext context) {
-    final expectedProfitData = useProvider(expectedProfitProvider);
+    final expectedProfitData = useProvider(expectedProfitProvider).state;
 
-    return Table(
-      border: TableBorder.all(),
-      /* Riverpod で状態管理を行う */
-      children: [
-        TableRow(children: [SelectableText(""), Padding(padding: EdgeInsets.all(4.0),child: SelectableText("送金1(送金手数料[USDT])")), Padding(padding: EdgeInsets.all(4.0),child: SelectableText("買い業者")), Padding(padding: EdgeInsets.all(4.0),child: SelectableText("買い[BTC]")), Padding(padding: EdgeInsets.all(4.0),child: SelectableText("送金2(送金手数料[BTC])")), Padding(padding: EdgeInsets.all(4.0),child: SelectableText("売り業者")), Padding(padding: EdgeInsets.all(4.0),child: SelectableText("売り(儲け[USDT])")),]),
-        /******************************************/
-        // TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Binance")) ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.BTC_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.BTC_USDT].askstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.ETH_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.ETH_USDT].askstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.XRP_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.XRP_USDT].askstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.BNB_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbi[Symbol.BNB_USDT].askstr)),]),
-        // /******************************************/
-        // TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("FTX"))     ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.BTC_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.BTC_USDT].askstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.ETH_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.ETH_USDT].askstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.XRP_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.XRP_USDT].askstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.BNB_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsfx[Symbol.BNB_USDT].askstr)),]),
-        // /******************************************/
-        // TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("KuCoin"))  ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.BTC_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.BTC_USDT].askstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.ETH_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.ETH_USDT].askstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.XRP_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.XRP_USDT].askstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.BNB_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidskc[Symbol.BNB_USDT].askstr)),]),
-        // /******************************************/
-        // TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Bitstamp")),Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbs[Symbol.BTC_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbs[Symbol.BTC_USDT].askstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbs[Symbol.ETH_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbs[Symbol.ETH_USDT].askstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbs[Symbol.XRP_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbs[Symbol.XRP_USDT].askstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***'))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***')),]),
-        // /******************************************/
-        // TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Poloniex")),Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.BTC_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.BTC_USDT].askstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.ETH_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.ETH_USDT].askstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.XRP_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.XRP_USDT].askstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.BNB_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidspn[Symbol.BNB_USDT].askstr)),]),
-        // /******************************************/
-        // TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Bittrex")) ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbt[Symbol.BTC_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbt[Symbol.BTC_USDT].askstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbt[Symbol.ETH_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbt[Symbol.ETH_USDT].askstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbt[Symbol.XRP_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsbt[Symbol.XRP_USDT].askstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***'))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***')),]),
-        // /******************************************/
-        // TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("OKEx"))    ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsex[Symbol.BTC_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsex[Symbol.BTC_USDT].askstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsex[Symbol.ETH_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsex[Symbol.ETH_USDT].askstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsex[Symbol.XRP_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidsex[Symbol.XRP_USDT].askstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***'))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***')),]),
-        // /******************************************/
-        // TableRow(children: [Padding(padding: EdgeInsets.all(4.0),child: SelectableText("Liquid"))  ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidslq[Symbol.BTC_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidslq[Symbol.BTC_USDT].askstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidslq[Symbol.ETH_USDT].bidstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText(retAskBidslq[Symbol.ETH_USDT].askstr))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***'))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***'))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***'))
-        //   ,Padding(padding: EdgeInsets.all(4.0),child: SelectableText('***')),]),
-      ],);
+    /* BTCの最安業者/最高業者を探索 */
+
+
+    /* https://pub.dev/packages/spannable_grid */
+    return SpannableGrid(
+        showGrid: true,
+        rowHeight: Theme.of(context).textTheme.headline6!.fontSize! * 3.4,
+        columns: 7,
+        rows: 9,
+        cells: [
+          /* タイトル行 */
+          SpannableGridCellData(
+            id: "empty11",
+            row: 1,column: 1,rowSpan: 1,columnSpan: 1,
+            child: SelectableText("", style: Theme.of(context).textTheme.headline1,),
+          ),
+          SpannableGridCellData(
+            id: "title12",
+            row: 1, column: 2, rowSpan: 1, columnSpan: 1,
+            child: Container(
+                color: Colors.lightGreen,
+                child: SelectableText("送金1(送金手数料[USDT])", style: Theme.of(context).textTheme.headline6,)
+            ),
+          ),
+          SpannableGridCellData(
+            id: "title13",
+            row: 1, column: 3, rowSpan: 1, columnSpan: 1,
+            child: Container(
+                color: Colors.lightGreen,
+                child: SelectableText("買い業者", style: Theme.of(context).textTheme.headline6,)
+            ),
+          ),
+          SpannableGridCellData(
+            id: "title14",
+            row: 1, column: 4, rowSpan: 1, columnSpan: 1,
+            child: Container(
+                color: Colors.lightGreen,
+                child: SelectableText("買い[BTC]", style: Theme.of(context).textTheme.headline6,)
+            ),
+          ),
+          SpannableGridCellData(
+            id: "title15",
+            row: 1, column: 5, rowSpan: 1, columnSpan: 1,
+            child: Container(
+                color: Colors.lightGreen,
+                child: SelectableText("送金2(送金手数料[BTC])", style: Theme.of(context).textTheme.headline6,)
+            ),
+          ),
+          SpannableGridCellData(
+            id: "title16",
+            row: 1, column: 6, rowSpan: 1, columnSpan: 1,
+            child: Container(
+                color: Colors.lightGreen,
+                child: SelectableText("売り業者", style: Theme.of(context).textTheme.headline6,)
+            ),
+          ),
+          SpannableGridCellData(
+            id: "title17",
+            row: 1, column: 7, rowSpan: 1, columnSpan: 1,
+            child: Container(
+                color: Colors.lightGreen,
+                child: SelectableText("売り(儲け[USDT])", style: Theme.of(context).textTheme.headline6,)
+            ),
+          ),
+          /* Binanceデータ titile  */
+          SpannableGridCellData(
+            id: "bititile",
+            row: 2, column: 1, rowSpan: 1, columnSpan: 1,
+            child: Container(
+                color: Colors.lightGreen,
+                child: SelectableText("Binance", style: Theme.of(context).textTheme.headline6,)
+            ),
+          ),
+
+          SpannableGridCellData(
+            column: 4,
+            row: 4,
+            columnSpan: 2,
+            rowSpan: 2,
+            id: "Test Cell 1",
+            child: Container(
+              color: Colors.lime,
+              child: Center(
+                child: SelectableText("Tile 2x2",
+                  style: Theme.of(context).textTheme.title,
+                ),
+              ),
+            ),
+          ),
+        ],
+        spacing: 2.0,
+        onCellChanged: (cell) { print('Cell aaaaaaa changed'); },
+      );
   }
 }
